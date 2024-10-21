@@ -1,0 +1,62 @@
+#***************************************************************************
+#   DATE :21/10/2024
+#   OWNER : Group-04
+#   FILENAME : make_file
+#   DESCRIPTION: This Makefile is used to compile and link the server and 
+#                 client programs for a socket-based application. It defines 
+#                 the directory structure for source, header, binary, and 
+#                 object files, specifies the compiler and compilation flags, 
+#                 and sets up targets for building the server and client 
+#                 executables. The Makefile also includes rules for compiling 
+#                 individual source files and cleaning up the build artifacts.
+#****************************************************************************
+ 
+ 
+# Makefile for server and client programs
+ 
+# Directory structure
+SRCDIR = ../src
+INCDIR = ../inc
+BINDIR = ../bin
+OBJDIR = ../obj
+ 
+# Compiler and flags
+CC = gcc
+CFLAGS = -Wall -Wextra -g
+LDFLAGS = -pthread
+ 
+# Targets
+all: $(BINDIR)/server $(BINDIR)/client
+ 
+# Linking the server executable
+$(BINDIR)/server: $(OBJDIR)/server.o $(OBJDIR)/server_searchForFile.o $(OBJDIR)/server_searchForString.o $(OBJDIR)/server_displayFileContents.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+ 
+# Linking the client executable
+$(BINDIR)/client: $(OBJDIR)/client.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+ 
+# Compiling server source files
+$(OBJDIR)/server.o: $(SRCDIR)/server.c $(INCDIR)/server.h $(INCDIR)/loggers.h | $(BINDIR)
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+ 
+$(OBJDIR)/server_searchForFile.o: $(SRCDIR)/server_searchForFile.c $(INCDIR)/loggers.h | $(BINDIR)
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+ 
+$(OBJDIR)/server_searchForString.o: $(SRCDIR)/server_searchForString.c $(INCDIR)/loggers.h | $(BINDIR)
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+ 
+$(OBJDIR)/server_displayFileContents.o: $(SRCDIR)/server_displayFileContents.c $(INCDIR)/loggers.h | $(BINDIR)
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+ 
+# Compiling client source file
+$(OBJDIR)/client.o: $(SRCDIR)/client.c | $(BINDIR)
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+ 
+# Create the bin directory if it doesn't exist
+#$(BINDIR):mkdir -p $(BINDIR)
+ 
+# Clean target
+clean:
+make: *** No rule to make target 'mkdir', needed by '../BIN'.  Stop.
+	rm -rf $(OBJDIR)/*.o $(BINDIR)/server $(BINDIR)/client
